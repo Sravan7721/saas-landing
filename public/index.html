@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  
+  <style>
+  body { font-family: Georgia, 'Times New Roman', serif; background:#f8fafc; color:#0f172a; margin:0; padding:24px; }
+  header{display:flex; justify-content:space-between; align-items:center; max-width:980px; margin:0 auto; padding:12px;}
+  h1{font-size:38px; font-weight:800; margin:12px 0;}
+  .card{background:white; padding:18px; border-radius:8px; box-shadow:0 4px 12px rgba(2,6,23,0.06); max-width:420px;}
+  input, button{padding:8px; border:1px solid #cbd5e1; border-radius:6px;}
+  button{background:#0f172a; color:white; border:none; cursor:pointer;}
+</style>
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Acme SaaS — Landing</title>
+  <link rel="stylesheet" href="/tailwind.css">
+  <link rel="stylesheet" href="/tailwind.css">
+
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="bg-white shadow">
+    <div class="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="text-2xl font-bold">Acme</div>
+      <nav class="space-x-4">
+        <a href="#features" class="text-sm">Features</a>
+        <a href="#pricing" class="text-sm">Pricing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-12">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-4xl font-extrabold mb-4">Launch faster. Convert more.</h1>
+        <p class="text-slate-600 mb-6">A short one-liner about your product that converts visitors into leads.</p>
+        <ul class="space-y-2 text-slate-700 mb-6">
+          <li>• Free trial — no card required</li>
+          <li>• Email verified onboarding</li>
+          <li>• Dashboard & integrations</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h3 class="text-lg font-semibold mb-2">Get early access</h3>
+          <form id="signupForm" class="space-y-3">
+            <input name="name" placeholder="Full name (optional)" class="w-full border px-3 py-2 rounded" />
+            <input name="email" required type="email" placeholder="Your email" class="w-full border px-3 py-2 rounded" />
+            <button type="submit" class="w-full bg-slate-900 text-white py-2 rounded font-semibold">Get Access</button>
+            <p id="msg" class="text-sm text-green-600 hidden"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <section id="features" class="mt-12">
+      <h2 class="text-2xl font-bold mb-4">Features</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="bg-white rounded-lg p-4 shadow">
+          <h4 class="font-semibold">Verified leads</h4>
+          <p class="text-sm text-slate-600">We send a verification email to reduce fake signups.</p>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow">
+          <h4 class="font-semibold">Simple onboarding</h4>
+          <p class="text-sm text-slate-600">Minimal friction to get users into your product.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const name = form.name.value.trim();
+  const email = form.email.value.trim();
+  const msgEl = document.getElementById('msg');
+
+  if (!email) return alert('Please add email');
+
+  msgEl.classList.add('hidden');
+  try {
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      msgEl.textContent = 'Verification email sent — check your inbox.';
+      msgEl.classList.remove('hidden');
+      msgEl.classList.remove('text-red-600');
+      msgEl.classList.add('text-green-600');
+      form.reset();
+    } else {
+      msgEl.textContent = data?.error || 'Something went wrong';
+      msgEl.classList.remove('hidden');
+      msgEl.classList.remove('text-green-600');
+      msgEl.classList.add('text-red-600');
+    }
+  } catch (err) {
+    msgEl.textContent = 'Network error';
+    msgEl.classList.remove('hidden');
+    msgEl.classList.remove('text-green-600');
+    msgEl.classList.add('text-red-600');
+  }
+});
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</body>
+</html>
